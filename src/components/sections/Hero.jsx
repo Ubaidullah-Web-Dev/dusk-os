@@ -63,11 +63,13 @@ const Hero = () => {
                 scrollTrigger: {
                     trigger: hero,
                     start: "top center",
-                    // "play" on entering, "reverse" on leaving up (scrolling down past), 
-                    // "play" scroling back up into it, "reverse" scrolling futher up? 
-                    // Actually user requested "every time i scroll into it".
-                    // This implies resetting effectively. 
-                    toggleActions: "play none none reverse", // Play when enter, reverse when leave back up
+                    // "play" on enter (initial or scroll down into)
+                    // "none" on leave (scroll down past) - keep it visible? Or "reverse" to hide it so it can play again?
+                    // User wants it to "reanimate when i scroll into it again".
+                    // If we scroll down past it, and come back up, we want it to play again.
+                    // So onEnterBack should be "play" or "restart".
+                    // If we scroll up to top (past it), onLeaveBack should "reverse" or "reset".
+                    toggleActions: "play reverse play reverse",
                 }
             });
 
