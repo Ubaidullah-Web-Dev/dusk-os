@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dusk OS — The Linux Distribution Redefined</title>
+    <meta name="description"
+        content="Dusk OS is a next-generation Linux distribution designed for creators, developers, and power users who demand aesthetic perfection and raw performance.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --color-bg: #050508;
+            --color-bg-elevated: #0a0a0f;
+            --color-surface: #12121a;
+            --color-accent: #8b5cf6;
+            --color-accent-glow: rgba(139, 92, 246, 0.4);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html.lenis,
+        html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.15s var(--ease-out-expo),
+                background-color 0.15s ease,
+                width 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+                height 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .custom-cursor.hovering {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-color: transparent;
+        }
+
+        .custom-cursor-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Navigation Styles */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            padding: 1.5rem;
+            transition: all 0.5s var(--ease-out-expo);
+        }
+
+        .nav-inner {
+            max-width: 80rem;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            transition: all 0.5s var(--ease-out-expo);
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-scrolled .nav-inner {
+            background: rgba(18, 18, 26, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-color: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(18, 18, 26, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 3D Effects */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .perspective-2000 {
+            perspective: 2000px;
+        }
+
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+
+        /* Tilt Cards */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            transition: transform 0.1s ease-out;
+        }
+
+        .tilt-card-content {
+            transform: translateZ(30px);
+        }
+
+        .tilt-card-glare {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    rgba(255, 255, 255, 0.15) 0%,
+                    transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .tilt-card:hover .tilt-card-glare {
+            opacity: 1;
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s var(--ease-out-expo);
+        }
+
+        .magnetic-btn-inner {
+            transition: transform 0.3s var(--ease-out-expo);
+        }
+
+        /* Marquee */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Reveal Text */
+        .reveal-text {
+            overflow: hidden;
+            display: block;
+        }
+
+        .reveal-text-inner {
+            display: block;
+            transform: translateY(100%);
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            background-size: 60px 60px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 100%);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Glow */
+        .glow-purple {
+            box-shadow: 0 0 60px -15px var(--color-accent-glow);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotateX(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotateX(5deg);
+            }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Loading Dots */
+        @keyframes loadingDots {
+
+            0%,
+            20% {
+                content: '';
+            }
+
+            40% {
+                content: '.';
+            }
+
+            60% {
+                content: '..';
+            }
+
+            80%,
+            100% {
+                content: '...';
+            }
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: loadingDots 1.5s infinite;
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            z-index: 40;
+            overflow: hidden;
+        }
+
+        .scroll-progress-bar {
+            width: 100%;
+            background: #8b5cf6;
+            border-radius: 2px;
+            transition: height 0.1s linear;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-purple-500 selection:text-white">
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor hidden md:block" id="cursor"></div>
+    <div class="custom-cursor-dot hidden md:block" id="cursor-dot"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress hidden md:block" id="scrollProgress">
+        <div class="scroll-progress-bar" style="height: 0%"></div>
+    </div>
+
+    <!-- Navigation - ALWAYS VISIBLE -->
+    <nav id="navbar" class="nav-container">
+        <div class="nav-inner">
+            <a href="#" class="flex items-center gap-3 group magnetic-btn">
+                <div
+                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </div>
+                <span class="font-display font-bold text-xl tracking-tight text-white">Dusk OS</span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features"
+                    class="text-sm font-medium text-white/60 hover:text-white transition-colors magnetic-btn">
+                    <span class="magnetic-btn-inner">Features</span>
+                </a>
+                <a href="#showcase"
+                    class="text-sm font-medium text-white/60 hover:text-white transition-colors magnetic-btn">
+                    <span class="magnetic-btn-inner">Showcase</span>
+                </a>
+                <a href="#download"
+                    class="magnetic-btn bg-white text-black px-6 py-2.5 rounded-full text-sm font-semibold hover:scale-105 transition-transform">
+                    <span class="magnetic-btn-inner flex items-center gap-2">
+                        Download
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </span>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden p-2 text-white" onclick="toggleMobileMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu"
+            class="hidden md:hidden absolute top-full left-4 right-4 mt-2 glass rounded-2xl p-4 shadow-xl">
+            <div class="flex flex-col gap-2">
+                <a href="#features"
+                    class="p-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80">Features</a>
+                <a href="#showcase"
+                    class="p-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80">Showcase</a>
+                <a href="#download"
+                    class="p-3 rounded-xl bg-white text-black text-center text-sm font-semibold mt-2">Download Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20">
+        <!-- Background -->
+        <div class="absolute inset-0 z-0">
+            <div
+                class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent">
+            </div>
+            <div class="grid-bg absolute inset-0 opacity-30"></div>
+
+            <!-- Floating Orbs -->
+            <div class="parallax-layer absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px]"
+                data-speed="0.5"></div>
+            <div class="parallax-layer absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-600/10 rounded-full blur-[80px]"
+                data-speed="-0.3"></div>
+            <div class="parallax-layer absolute top-1/2 right-1/3 w-64 h-64 bg-pink-600/10 rounded-full blur-[60px]"
+                data-speed="0.8"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center perspective-1000">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 opacity-0" id="hero-badge">
+                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-white/60">v2.0 Now Available</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-display font-bold mb-6 leading-[0.9] tracking-tight" id="hero-title">
+                <span class="block text-6xl md:text-8xl lg:text-9xl reveal-text">
+                    <span class="reveal-text-inner">Linux,</span>
+                </span>
+                <span class="block text-6xl md:text-8xl lg:text-9xl reveal-text mt-2">
+                    <span class="reveal-text-inner gradient-text">reimagined</span>
+                </span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 opacity-0" id="hero-subtitle">
+                Dusk OS combines the power of Linux with a breathtaking aesthetic. Built for creators who refuse to
+                compromise between beauty and performance.
+            </p>
+
+            <!-- CTAs -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0" id="hero-cta">
+                <button
+                    class="magnetic-btn group bg-white text-black px-8 py-4 rounded-full font-semibold text-lg hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] transition-all duration-300">
+                    <span class="magnetic-btn-inner flex items-center gap-3">
+                        Download Dusk OS
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </span>
+                </button>
+                <button
+                    class="magnetic-btn glass px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all duration-300 border border-white/10 text-white">
+                    <span class="magnetic-btn-inner">View Documentation</span>
+                </button>
+            </div>
+
+            <!-- Terminal Mockup -->
+            <div class="mt-16 max-w-4xl mx-auto opacity-0 perspective-1000" id="hero-mockup">
+                <div class="relative transform-gpu transition-transform duration-100 ease-out" id="mockup-3d">
+                    <div
+                        class="absolute -inset-4 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-3xl blur-2xl opacity-50">
+                    </div>
+
+                    <div
+                        class="relative bg-[#0a0a0f]/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl glow-purple">
+                        <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/5">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                            </div>
+                            <div class="flex-1 text-center">
+                                <span class="text-xs text-white/30 font-mono">dusk@system ~ </span>
+                            </div>
+                        </div>
+
+                        <div class="p-8 font-mono text-sm md:text-base text-left space-y-2">
+                            <div class="typing-line opacity-0">
+                                <span class="text-purple-400">$</span>
+                                <span class="text-white/80 ml-2">dusk install --with-desktop --optimize</span>
+                            </div>
+                            <div class="typing-line opacity-0 pl-4 text-white/40 text-xs md:text-sm">
+                                <span>→ Resolving dependencies<span class="loading-dots"></span> <span
+                                        class="text-green-400">done</span></span>
+                            </div>
+                            <div class="typing-line opacity-0 pl-4 text-white/40 text-xs md:text-sm">
+                                <span>→ Installing core system<span class="loading-dots"></span> <span
+                                        class="text-green-400">done</span></span>
+                            </div>
+                            <div class="typing-line opacity-0 pl-4 text-white/40 text-xs md:text-sm">
+                                <span>→ Configuring Dusk Desktop<span class="loading-dots"></span> <span
+                                        class="text-green-400">done</span></span>
+                            </div>
+                            <div class="typing-line opacity-0 mt-4 pt-4 border-t border-white/10">
+                                <span class="text-green-400">✓</span>
+                                <span class="text-white ml-2">Installation complete. Welcome to</span>
+                                <span class="text-purple-400 font-bold ml-1">Dusk OS</span>
+                                <span class="text-white/40">— Version 2.0.1</span>
+                            </div>
+                        </div>
+
+                        <div
+                            class="absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl opacity-80 blur-sm transform rotate-12 floating shadow-2xl border border-white/20">
+                        </div>
+                        <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl opacity-60 blur-sm transform -rotate-12 floating shadow-2xl border border-white/20"
+                            style="animation-delay: -3s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+            <span class="text-xs uppercase tracking-widest text-white/40">Scroll to explore</span>
+            <div class="w-px h-12 bg-gradient-to-b from-white/40 to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <section class="py-16 overflow-hidden border-y border-white/5 bg-white/[0.02] rotate-1 scale-105">
+        <div class="marquee-container">
+            <div
+                class="marquee-content flex items-center gap-12 text-4xl md:text-6xl font-display font-bold text-white/10">
+                <span>Blazing Fast</span>
+                <span class="text-purple-500/30">•</span>
+                <span>Secure by Design</span>
+                <span class="text-purple-500/30">•</span>
+                <span>Beautiful UI</span>
+                <span class="text-purple-500/30">•</span>
+                <span>Developer First</span>
+                <span class="text-purple-500/30">•</span>
+                <span>Blazing Fast</span>
+                <span class="text-purple-500/30">•</span>
+                <span>Secure by Design</span>
+                <span class="text-purple-500/30">•</span>
+                <span>Beautiful UI</span>
+                <span class="text-purple-500/30">•</span>
+                <span>Developer First</span>
+                <span class="text-purple-500/30">•</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D Showcase -->
+    <section id="showcase" class="relative min-h-[300vh] bg-black">
+        <div class="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 grid-bg opacity-20"></div>
+
+            <div class="relative w-full max-w-6xl mx-auto px-6 perspective-2000">
+                <div id="device-container" class="relative preserve-3d">
+
+                    <div class="relative bg-gradient-to-b from-[#1a1a2e] to-[#0a0a0f] rounded-3xl border border-white/10 p-2 shadow-2xl"
+                        id="main-screen">
+                        <div class="bg-black rounded-2xl overflow-hidden aspect-video relative">
+                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop&q=80"
+                                alt="Dusk Desktop" class="w-full h-full object-cover opacity-80 loaded">
+
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                            </div>
+                            <div class="absolute bottom-8 left-8 right-8">
+                                <div class="glass rounded-xl p-4 max-w-md opacity-0 translate-y-4" id="screen-ui">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                                        <span class="text-xs font-mono text-white/60">System Online</span>
+                                    </div>
+                                    <div class="text-lg font-semibold text-white">Dusk Desktop Environment</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute -right-20 top-20 w-64 glass rounded-2xl p-4 opacity-0" id="float-card-1"
+                        style="transform: translateZ(100px) rotateY(-15deg);">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-white">Performance</div>
+                                <div class="text-xs text-white/40">Optimized Kernel</div>
+                            </div>
+                        </div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full w-3/4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <div class="absolute -left-20 bottom-32 w-64 glass rounded-2xl p-4 opacity-0" id="float-card-2"
+                        style="transform: translateZ(150px) rotateY(15deg) rotateX(5deg);">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-white">Security</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Active</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2 text-xs text-white/60">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Firewall Enabled
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-white/60">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Encrypted Filesystem
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="relative py-32 px-6 bg-[#050508]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="font-display text-5xl md:text-7xl font-bold mb-6 text-white">
+                    Everything you need.<br>
+                    <span class="gradient-text">Nothing you don't.</span>
+                </h2>
+                <p class="text-lg text-white/40 max-w-2xl mx-auto">
+                    A curated ecosystem of tools designed to work in perfect harmony.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 perspective-1000">
+
+                <div class="tilt-card lg:col-span-2 lg:row-span-2 bg-gradient-to-br from-white/[0.08] to-white/[0.02] rounded-3xl p-8 border border-white/10 relative overflow-hidden group cursor-pointer"
+                    data-tilt>
+                    <div class="tilt-card-glare rounded-3xl"></div>
+                    <div class="tilt-card-content relative z-10 h-full flex flex-col">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-3xl font-display font-bold mb-3 text-white">Dusk Desktop</h3>
+                        <p class="text-white/50 mb-6 max-w-md">
+                            A revolutionary desktop environment built from scratch. Smooth animations, intelligent
+                            window management, and a focus mode that eliminates distractions.
+                        </p>
+                        <div class="flex-1 relative mt-4">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent z-10">
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
+                                alt="Desktop"
+                                class="w-full h-full object-cover rounded-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500 transform group-hover:scale-105 loaded">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tilt-card bg-white/[0.03] rounded-3xl p-6 border border-white/10 relative overflow-hidden group cursor-pointer"
+                    data-tilt>
+                    <div class="tilt-card-glare rounded-3xl"></div>
+                    <div class="tilt-card-content">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold mb-2 text-white">Blazing Fast</h3>
+                        <p class="text-sm text-white/50 mb-4">Optimized kernel with custom scheduler. Boot in 3 seconds.
+                        </p>
+                        <div class="flex items-end gap-1 h-20">
+                            <div class="flex-1 bg-white/10 rounded-t" style="height: 40%"></div>
+                            <div class="flex-1 bg-white/20 rounded-t" style="height: 60%"></div>
+                            <div class="flex-1 bg-purple-500/40 rounded-t" style="height: 80%"></div>
+                            <div class="flex-1 bg-purple-500 rounded-t" style="height: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tilt-card bg-white/[0.03] rounded-3xl p-6 border border-white/10 relative overflow-hidden group cursor-pointer"
+                    data-tilt>
+                    <div class="tilt-card-glare rounded-3xl"></div>
+                    <div class="tilt-card-content">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-pink-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold mb-2 text-white">Secure by Design</h3>
+                        <p class="text-sm text-white/50">Immutable base system with zero-trust architecture.</p>
+                        <div class="mt-4 flex -space-x-2">
+                            <div
+                                class="w-8 h-8 rounded-full bg-white/10 border-2 border-[#050508] flex items-center justify-center text-xs">
+                                🔒</div>
+                            <div
+                                class="w-8 h-8 rounded-full bg-white/10 border-2 border-[#050508] flex items-center justify-center text-xs">
+                                🛡️</div>
+                            <div
+                                class="w-8 h-8 rounded-full bg-white/10 border-2 border-[#050508] flex items-center justify-center text-xs">
+                                🔐</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tilt-card bg-white/[0.03] rounded-3xl p-6 border border-white/10 relative overflow-hidden group cursor-pointer"
+                    data-tilt>
+                    <div class="tilt-card-glare rounded-3xl"></div>
+                    <div class="tilt-card-content">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-display font-bold mb-2 text-white">Dev-First</h3>
+                        <p class="text-sm text-white/50 mb-3">Best-in-class toolchain.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span
+                                class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/60">Rust</span>
+                            <span
+                                class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/60">Go</span>
+                            <span
+                                class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/60">Node</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tilt-card lg:col-span-2 bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-3xl p-6 border border-white/10 relative overflow-hidden group cursor-pointer"
+                    data-tilt>
+                    <div class="tilt-card-glare rounded-3xl"></div>
+                    <div class="tilt-card-content flex items-center justify-between">
+                        <div>
+                            <h3 class="text-2xl font-display font-bold mb-2 text-white">Atomic Updates</h3>
+                            <p class="text-white/50">Roll back any change instantly. Updates are transactional.</p>
+                        </div>
+                        <div
+                            class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center transform group-hover:rotate-180 transition-transform duration-700">
+                            <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Parallax Image -->
+    <section class="relative py-32 overflow-hidden">
+        <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-[120%] h-[120%] absolute" id="parallax-image-container">
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=2400&auto=format&fit=crop&q=80"
+                    alt="Space" class="w-full h-full object-cover opacity-30 blur-sm loaded">
+            </div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <h2 class="font-display text-6xl md:text-8xl font-bold mb-6 mix-blend-overlay opacity-50 text-white">
+                Infinite<br>Possibilities
+            </h2>
+        </div>
+    </section>
+
+    <!-- Download -->
+    <section id="download" class="relative py-32 px-6 min-h-screen flex items-center">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/10 to-transparent"></div>
+
+        <div class="max-w-4xl mx-auto text-center relative z-10 w-full">
+            <div class="glass rounded-3xl p-12 md:p-16 relative overflow-hidden" id="download-card">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-blue-600/10 opacity-50"></div>
+                <div class="absolute -top-24 -right-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl"></div>
+
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-display font-bold mb-6 text-white">Ready to make<br>the switch?
+                    </h2>
+                    <p class="text-lg text-white/50 mb-10 max-w-xl mx-auto">
+                        Join thousands of developers and creators who've already discovered the future of Linux.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                        <button
+                            class="magnetic-btn bg-white text-black px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
+                            <span class="magnetic-btn-inner flex items-center justify-center gap-3">
+                                Download Dusk OS 2.0
+                                <span class="text-xs opacity-60 font-normal">ISO 1.4 GB</span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-6 text-sm text-white/40">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            Free & Open Source
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            GPG Verified
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative py-16 px-6 border-t border-white/5 bg-black">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </div>
+                    <span class="font-display font-bold text-xl text-white">Dusk OS</span>
+                </div>
+
+                <div class="flex gap-8 text-sm text-white/40">
+                    <a href="#" class="hover:text-white transition-colors magnetic-btn"><span
+                            class="magnetic-btn-inner">Twitter</span></a>
+                    <a href="#" class="hover:text-white transition-colors magnetic-btn"><span
+                            class="magnetic-btn-inner">GitHub</span></a>
+                    <a href="#" class="hover:text-white transition-colors magnetic-btn"><span
+                            class="magnetic-btn-inner">Discord</span></a>
+                </div>
+
+                <div class="text-sm text-white/20">
+                    © 2026 Dusk Systems
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lenis
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: 'vertical',
+            smoothWheel: true,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        let dotX = 0, dotY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+
+            dotX += (mouseX - dotX) * 0.5;
+            dotY += (mouseY - dotY) * 0.5;
+            cursorDot.style.left = dotX + 'px';
+            cursorDot.style.top = dotY + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor hover
+        document.querySelectorAll('a, button, .tilt-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+        });
+
+        // Magnetic Buttons
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const inner = btn.querySelector('.magnetic-btn-inner') || btn;
+                inner.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                const inner = btn.querySelector('.magnetic-btn-inner') || btn;
+                inner.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Navigation Scroll Effect
+        const navbar = document.getElementById('navbar');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 50) {
+                navbar.classList.add('nav-scrolled');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+            }
+
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Entrance
+        const heroTl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+
+        heroTl
+            .to('#hero-badge', { opacity: 1, y: 0, duration: 0.8, delay: 0.2 })
+            .to('.reveal-text-inner', { y: 0, duration: 1.2, stagger: 0.1 }, '-=0.4')
+            .to('#hero-subtitle', { opacity: 1, y: 0, duration: 0.8 }, '-=0.8')
+            .to('#hero-cta', { opacity: 1, y: 0, duration: 0.8 }, '-=0.6')
+            .to('#hero-mockup', { opacity: 1, y: 0, duration: 1.5, ease: 'elastic.out(1, 0.5)' }, '-=0.4');
+
+        // Typing Lines
+        document.querySelectorAll('.typing-line').forEach((line, i) => {
+            gsap.to(line, {
+                opacity: 1,
+                duration: 0.5,
+                delay: 1.5 + (i * 0.8)
+            });
+        });
+
+        // 3D Mockup Mouse Follow
+        const mockup = document.getElementById('mockup-3d');
+        const hero = document.getElementById('hero');
+
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+            gsap.to(mockup, {
+                rotateY: x * 10,
+                rotateX: -y * 10,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
+        });
+
+        hero.addEventListener('mouseleave', () => {
+            gsap.to(mockup, { rotateY: 0, rotateX: 0, duration: 0.5 });
+        });
+
+        // Parallax Orbs
+        gsap.utils.toArray('.parallax-layer').forEach(layer => {
+            const speed = layer.dataset.speed || 0.5;
+            gsap.to(layer, {
+                y: `${100 * speed}%`,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+        });
+
+        // Scroll Progress
+        gsap.to('.scroll-progress-bar', {
+            height: '100%',
+            ease: 'none',
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: true,
+                onUpdate: (self) => {
+                    document.querySelector('.scroll-progress-bar').style.height = `${self.progress * 100}%`;
+                }
+            }
+        });
+
+        // Pinned Showcase
+        const showcaseTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#showcase',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1
+            }
+        });
+
+        showcaseTl
+            .to('#device-container', { rotateY: 360, rotateX: 10, scale: 0.8, duration: 3 })
+            .to('#screen-ui', { opacity: 1, y: 0, duration: 0.5 }, 0.5)
+            .to('#float-card-1', { opacity: 1, x: -50, rotateY: -25, duration: 1 }, 0.3)
+            .to('#float-card-2', { opacity: 1, x: 50, rotateY: 25, duration: 1 }, 0.5);
+
+        // Tilt Cards
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+
+                gsap.to(card, {
+                    rotateX: rotateX,
+                    rotateY: rotateY,
+                    scale: 1.02,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    rotateX: 0,
+                    rotateY: 0,
+                    scale: 1,
+                    duration: 0.5,
+                    ease: 'elastic.out(1, 0.5)'
+                });
+            });
+        });
+
+        // Parallax Image
+        gsap.to('#parallax-image-container', {
+            y: '-20%',
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#parallax-image-container',
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true
+            }
+        });
+
+        // Download Card
+        gsap.from('#download-card', {
+            scale: 0.8,
+            opacity: 0,
+            duration: 1,
+            ease: 'expo.out',
+            scrollTrigger: {
+                trigger: '#download',
+                start: 'top 70%'
+            }
+        });
+
+        // Smooth Scroll to Anchors
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    lenis.scrollTo(target, {
+                        offset: -100,
+                        duration: 1.5
+                    });
+                    document.getElementById('mobileMenu')?.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+{
+    "site": {
+        "title": "Dusk OS — The Linux Distribution Redefined",
+        "description": "Dusk OS is a next-generation Linux distribution designed for creators, developers, and power users who demand aesthetic perfection and raw performance.",
+        "copyright": "© 2026 Dusk Systems"
+    },
+    "navigation": {
+        "brand": "Dusk OS",
+        "links": [
+            {
+                "label": "Features",
+                "href": "#features"
+            },
+            {
+                "label": "Showcase",
+                "href": "#showcase"
+            }
+        ],
+        "cta": {
+            "label": "Download",
+            "href": "#download"
+        }
+    },
+    "hero": {
+        "badge": "v2.0 Now Available",
+        "title": [
+            "Linux,",
+            "reimagined"
+        ],
+        "subtitle": "Dusk OS combines the power of Linux with a breathtaking aesthetic. Built for creators who refuse to compromise between beauty and performance.",
+        "ctas": [
+            {
+                "label": "Download Dusk OS",
+                "primary": true
+            },
+            {
+                "label": "View Documentation",
+                "primary": false
+            }
+        ],
+        "terminal": {
+            "title": "dusk@system ~",
+            "command": "dusk install --with-desktop --optimize",
+            "steps": [
+                {
+                    "text": "Resolving dependencies",
+                    "status": "done"
+                },
+                {
+                    "text": "Installing core system",
+                    "status": "done"
+                },
+                {
+                    "text": "Configuring Dusk Desktop",
+                    "status": "done"
+                }
+            ],
+            "success": {
+                "message": "Installation complete. Welcome to",
+                "highlight": "Dusk OS",
+                "version": "Version 2.0.1"
+            }
+        }
+    },
+    "marquee": {
+        "items": [
+            "Blazing Fast",
+            "Secure by Design",
+            "Beautiful UI",
+            "Developer First"
+        ]
+    },
+    "showcase": {
+        "image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop&q=80",
+        "ui": {
+            "status": "System Online",
+            "title": "Dusk Desktop Environment"
+        },
+        "cards": [
+            {
+                "id": "performance",
+                "icon": "bolt",
+                "title": "Performance",
+                "subtitle": "Optimized Kernel",
+                "progress": 75
+            },
+            {
+                "id": "security",
+                "title": "Security",
+                "status": "Active",
+                "features": [
+                    "Firewall Enabled",
+                    "Encrypted Filesystem"
+                ]
+            }
+        ]
+    },
+    "features": {
+        "title": [
+            "Everything you need.",
+            "Nothing you don't."
+        ],
+        "subtitle": "A curated ecosystem of tools designed to work in perfect harmony.",
+        "cards": [
+            {
+                "id": "desktop",
+                "size": "large",
+                "icon": "desktop",
+                "gradient": "from-indigo-500 to-purple-600",
+                "title": "Dusk Desktop",
+                "description": "A revolutionary desktop environment built from scratch. Smooth animations, intelligent window management, and a focus mode that eliminates distractions.",
+                "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                "id": "fast",
+                "size": "small",
+                "icon": "bolt",
+                "gradient": "from-green-400 to-emerald-600",
+                "title": "Blazing Fast",
+                "description": "Optimized kernel with custom scheduler. Boot in 3 seconds."
+            },
+            {
+                "id": "secure",
+                "size": "small",
+                "icon": "lock",
+                "gradient": "from-red-400 to-pink-600",
+                "title": "Secure by Design",
+                "description": "Immutable base system with zero-trust architecture.",
+                "emojis": [
+                    "🔒",
+                    "🛡️",
+                    "🔐"
+                ]
+            },
+            {
+                "id": "dev",
+                "size": "small",
+                "icon": "code",
+                "gradient": "from-blue-400 to-cyan-600",
+                "title": "Dev-First",
+                "description": "Best-in-class toolchain.",
+                "tags": [
+                    "Rust",
+                    "Go",
+                    "Node"
+                ]
+            },
+            {
+                "id": "atomic",
+                "size": "wide",
+                "icon": "refresh",
+                "title": "Atomic Updates",
+                "description": "Roll back any change instantly. Updates are transactional."
+            }
+        ]
+    },
+    "parallax": {
+        "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=2400&auto=format&fit=crop&q=80",
+        "title": [
+            "Infinite",
+            "Possibilities"
+        ]
+    },
+    "download": {
+        "title": [
+            "Ready to make",
+            "the switch?"
+        ],
+        "subtitle": "Join thousands of developers and creators who've already discovered the future of Linux.",
+        "button": {
+            "label": "Download Dusk OS 2.0",
+            "size": "ISO 1.4 GB"
+        },
+        "badges": [
+            {
+                "icon": "shield",
+                "label": "Free & Open Source"
+            },
+            {
+                "icon": "lock",
+                "label": "GPG Verified"
+            }
+        ]
+    },
+    "footer": {
+        "brand": "Dusk OS",
+        "links": [
+            {
+                "label": "Twitter",
+                "href": "#"
+            },
+            {
+                "label": "GitHub",
+                "href": "#"
+            },
+            {
+                "label": "Discord",
+                "href": "#"
+            }
+        ]
+    }
+}
