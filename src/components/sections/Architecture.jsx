@@ -25,27 +25,38 @@ const Architecture = () => {
             gsap.set("#arch-container", {
                 rotateX: 60,
                 rotateZ: -20,
-                scale: 0.8
+                scale: 0.8,
+                y: 0
             });
 
-            // Phase 1: Expand
+            // Phase 1: Expand & Lift
             tl.to("#arch-container", {
-                rotateX: 60,
-                rotateZ: -20,
-                scale: 0.8,
-                duration: 1
+                rotateX: 40, // Titl up to face user more
+                rotateZ: -10, // Straighten slightly
+                scale: 1, // Zoom in slightly
+                y: -50, // "Lift up" effect
+                duration: 1,
+                ease: "power1.inOut" // Buttery smooth ease
             })
-                .to("#arch-layer-0", { z: 200, y: -100, opacity: 1, duration: 1 }, 0)
-                .to("#arch-layer-1", { z: 0, opacity: 1, duration: 1 }, 0)
-                .to("#arch-layer-2", { z: -200, y: 100, opacity: 1, duration: 1 }, 0)
+                .to("#arch-layer-0", { z: 180, y: -80, opacity: 1, duration: 1, ease: "power1.inOut" }, 0)
+                .to("#arch-layer-1", { z: 0, opacity: 1, duration: 1, ease: "power1.inOut" }, 0)
+                .to("#arch-layer-2", { z: -180, y: 80, opacity: 1, duration: 1, ease: "power1.inOut" }, 0)
 
-                // Phase 2: Hold (do nothing for a bit so user can see it)
+                // Phase 2: Hold
                 .to({}, { duration: 0.5 })
 
-                // Phase 3: Collapse back
-                .to("#arch-layer-0", { z: 0, y: 0, opacity: 0, duration: 1 }, ">")
-                .to("#arch-layer-1", { z: 0, opacity: 0, duration: 1 }, "<")
-                .to("#arch-layer-2", { z: 0, y: 0, opacity: 0, duration: 1 }, "<");
+                // Phase 3: Collapse back & Reset
+                .to("#arch-container", {
+                    rotateX: 60,
+                    rotateZ: -20,
+                    scale: 0.8,
+                    y: 0,
+                    duration: 1,
+                    ease: "power1.inOut"
+                }, ">")
+                .to("#arch-layer-0", { z: 0, y: 0, opacity: 0, duration: 1, ease: "power1.inOut" }, "<")
+                .to("#arch-layer-1", { z: 0, opacity: 0, duration: 1, ease: "power1.inOut" }, "<")
+                .to("#arch-layer-2", { z: 0, y: 0, opacity: 0, duration: 1, ease: "power1.inOut" }, "<");
 
             // Mouse Tilt Effect
             const handleMouseMove = (e) => {
