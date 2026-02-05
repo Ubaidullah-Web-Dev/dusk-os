@@ -20,6 +20,7 @@ import Marquee from './components/sections/Marquee';
 import Showcase from './components/sections/Showcase';
 import Features from './components/sections/Features';
 import ParallaxImage from './components/sections/ParallaxImage';
+import Architecture from './components/sections/Architecture';
 import Download from './components/sections/Download';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
                 <Showcase />
                 <Features />
                 <ParallaxImage />
+                <Architecture />
                 <Download />
             </main>
 

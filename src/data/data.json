@@ -161,6 +161,33 @@
             "Possibilities"
         ]
     },
+    "architecture": {
+        "title": "System Architecture",
+        "subtitle": "A masterpiece of engineering, layer by layer.",
+        "layers": [
+            {
+                "id": "kernel",
+                "title": "Hybrid Kernel",
+                "description": "Optimized low-latency scheduler with real-time capabilities.",
+                "icon": "chip",
+                "color": "from-blue-500 to-indigo-600"
+            },
+            {
+                "id": "core",
+                "title": "Dusk Core",
+                "description": "Atomic system services and immutable package management.",
+                "icon": "cube",
+                "color": "from-purple-500 to-pink-600"
+            },
+            {
+                "id": "ui",
+                "title": "Glass Shell",
+                "description": "Wayland-based compositor with hardware-accelerated blur.",
+                "icon": "window",
+                "color": "from-emerald-400 to-cyan-500"
+            }
+        ]
+    },
     "download": {
         "title": [
             "Ready to make",
