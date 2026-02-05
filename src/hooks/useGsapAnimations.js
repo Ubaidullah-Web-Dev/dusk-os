@@ -9,40 +9,8 @@ export const useGsapAnimations = () => {
         // Global defaults
         gsap.defaults({ ease: 'power3.out', duration: 1 });
 
-        // Hero Entrance Animation - More dramatic
-        const heroTl = gsap.timeline();
+        // Hero Entrance Animation - MOVED TO COMPONENT
 
-        heroTl
-            .to('#hero-badge', {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: 'power4.out'
-            })
-            .to('.reveal-text-inner', {
-                y: 0,
-                duration: 1.5,
-                stagger: 0.1,
-                ease: 'power4.out'
-            }, '-=0.8')
-            .to('#hero-subtitle', {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: 'power3.out'
-            }, '-=1.2')
-            .to('#hero-cta', {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: 'power3.out'
-            }, '-=0.8')
-            .to('#hero-mockup', {
-                opacity: 1,
-                y: 0,
-                duration: 1.5,
-                ease: 'power3.out'
-            }, '-=0.8');
 
         // Typing Lines - Smoother
         const typingLines = document.querySelectorAll('.typing-line');

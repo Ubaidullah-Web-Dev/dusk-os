@@ -1,42 +1,127 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import MagneticButton from '../common/MagneticButton';
 import data from '../../data/data.json';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Helper component to split text into characters
+const SplitText = ({ children, className = '' }) => {
+    if (typeof children !== 'string') return children;
+
+    return (
+        <span className={`inline-block ${className}`}>
+            {children.split('').map((char, index) => (
+                <span
+                    key={index}
+                    className="char-split inline-block origin-bottom"
+                    style={{ whiteSpace: 'pre' }} // Preserve spaces
+                >
+                    {char}
+                </span>
+            ))}
+        </span>
+    );
+};
 
 const Hero = () => {
     const mockupRef = useRef(null);
     const heroRef = useRef(null);
+    const textContainerRef = useRef(null);
 
     const { badge, title, subtitle, ctas, terminal } = data.hero;
 
     useEffect(() => {
-        const mockup = mockupRef.current;
-        const hero = heroRef.current;
+        const ctx = gsap.context(() => {
+            // Mouse Movement for Mockup
+            const mockup = mockupRef.current;
+            const hero = heroRef.current;
 
-        const handleMouseMove = (e) => {
-            const rect = hero.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            const handleMouseMove = (e) => {
+                const rect = hero.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-            gsap.to(mockup, {
-                rotateY: x * 10,
-                rotateX: -y * 10,
-                duration: 0.5,
-                ease: 'power2.out'
+                gsap.to(mockup, {
+                    rotateY: x * 10,
+                    rotateX: -y * 10,
+                    duration: 0.5,
+                    ease: 'power2.out'
+                });
+            };
+
+            const handleMouseLeave = () => {
+                gsap.to(mockup, { rotateY: 0, rotateX: 0, duration: 0.5 });
+            };
+
+            hero.addEventListener('mousemove', handleMouseMove);
+            hero.addEventListener('mouseleave', handleMouseLeave);
+
+            // Replayable Entrance Animation
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: hero,
+                    start: "top center",
+                    // "play" on entering, "reverse" on leaving up (scrolling down past), 
+                    // "play" scroling back up into it, "reverse" scrolling futher up? 
+                    // Actually user requested "every time i scroll into it".
+                    // This implies resetting effectively. 
+                    toggleActions: "play none none reverse", // Play when enter, reverse when leave back up
+                }
             });
-        };
 
-        const handleMouseLeave = () => {
-            gsap.to(mockup, { rotateY: 0, rotateX: 0, duration: 0.5 });
-        };
+            // Initial sets
+            gsap.set(".char-split", {
+                y: 100,
+                opacity: 0,
+                rotateX: -90,
+                filter: "blur(10px)"
+            });
+            gsap.set("#hero-badge, #hero-subtitle, #hero-cta, #hero-mockup", { opacity: 0, y: 20 });
 
-        hero.addEventListener('mousemove', handleMouseMove);
-        hero.addEventListener('mouseleave', handleMouseLeave);
+            tl
+                .to("#hero-badge", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power3.out"
+                })
+                .to(".char-split", {
+                    y: 0,
+                    opacity: 1,
+                    rotateX: 0,
+                    filter: "blur(0px)",
+                    stagger: 0.05,
+                    duration: 1,
+                    ease: "back.out(1.7)"
+                }, "-=0.4")
+                .to("#hero-subtitle", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power3.out"
+                }, "-=0.6")
+                .to("#hero-cta", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power3.out"
+                }, "-=0.6")
+                .to("#hero-mockup", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out"
+                }, "-=0.6");
 
-        return () => {
-            hero.removeEventListener('mousemove', handleMouseMove);
-            hero.removeEventListener('mouseleave', handleMouseLeave);
-        };
+            return () => {
+                hero.removeEventListener('mousemove', handleMouseMove);
+                hero.removeEventListener('mouseleave', handleMouseLeave);
+            };
+        }, heroRef);
+
+        return () => ctx.revert();
     }, []);
 
     return (
@@ -52,7 +137,7 @@ const Hero = () => {
                 <div className="parallax-layer absolute top-1/2 right-1/3 w-64 h-64 bg-pink-600/10 rounded-full blur-[60px]" data-speed="0.8" />
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 text-center perspective-1000">
+            <div ref={textContainerRef} className="relative z-10 max-w-7xl mx-auto px-6 text-center perspective-1000">
                 {/* Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 opacity-0" id="hero-badge">
                     <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
@@ -61,11 +146,13 @@ const Hero = () => {
 
                 {/* Title */}
                 <h1 className="font-display font-bold mb-6 leading-[0.9] tracking-tight" id="hero-title">
-                    <span className="block text-6xl md:text-8xl lg:text-9xl reveal-text">
-                        <span className="reveal-text-inner">{title[0]}</span>
+                    <span className="block text-6xl md:text-8xl lg:text-9xl overflow-hidden py-2">
+                        <SplitText>{title[0]}</SplitText>
                     </span>
-                    <span className="block text-6xl md:text-8xl lg:text-9xl reveal-text mt-2">
-                        <span className="reveal-text-inner gradient-text">{title[1]}</span>
+                    <span className="block text-6xl md:text-8xl lg:text-9xl mt-2 overflow-hidden py-2">
+                        <span className="gradient-text">
+                            <SplitText>{title[1]}</SplitText>
+                        </span>
                     </span>
                 </h1>
 
