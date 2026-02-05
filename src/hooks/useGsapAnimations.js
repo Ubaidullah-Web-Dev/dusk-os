@@ -125,61 +125,8 @@ export const useGsapAnimations = () => {
                 .to('#float-card-2', { opacity: 1, x: 60, rotateY: 30, duration: 1.5 }, 0.7);
         }
 
-        // Architecture Exploded View
-        const archTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: '#architecture',
-                start: 'top top',
-                end: '+=200%', // Pin for 2 screens length
-                pin: true,
-                scrub: 1,
-            }
-        });
-
-        archTl
-            .to('#arch-container', {
-                rotateX: 60,
-                rotateZ: -20,
-                scale: 0.8,
-                duration: 1
-            })
-            // Animate layers apart
-            .to('#arch-layer-0', { // Top layer (UI)
-                z: 200,
-                y: -100,
-                opacity: 1,
-                duration: 1
-            }, '<')
-            .to('#arch-layer-1', { // Middle layer (Core)
-                z: 0,
-                opacity: 1,
-                duration: 1
-            }, '<')
-            .to('#arch-layer-2', { // Bottom layer (Kernel)
-                z: -200,
-                y: 100,
-                opacity: 1,
-                duration: 1
-            }, '<');
-
-        // Mouse Tilt for Architecture
-        const archContainer = document.querySelector('#architecture');
-        if (archContainer) {
-            archContainer.addEventListener('mousemove', (e) => {
-                const { clientX, clientY } = e;
-                const { innerWidth, innerHeight } = window;
-
-                // Calculate normalized mouse position (-1 to 1)
-                const x = (clientX / innerWidth - 0.5) * 2;
-                const y = (clientY / innerHeight - 0.5) * 2;
-
-                gsap.to('#arch-container', {
-                    rotateY: x * 15, // Tilt Y based on mouse X
-                    duration: 1,
-                    ease: 'power2.out'
-                });
-            });
-        }
+        // Architecture Exploded View - MOVED TO COMPONENT
+        // Mouse Tilt for Architecture - MOVED TO COMPONENT
 
         // Parallax Image - Enhanced
         const parallaxImg = document.querySelector('#parallax-image-container');
