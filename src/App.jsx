@@ -21,6 +21,7 @@ import Showcase from './components/sections/Showcase';
 import Features from './components/sections/Features';
 import ParallaxImage from './components/sections/ParallaxImage';
 import Architecture from './components/sections/Architecture';
+import Ecosystem from './components/sections/Ecosystem';
 import Download from './components/sections/Download';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
                 <Features />
                 <ParallaxImage />
                 <Architecture />
+                <Ecosystem />
                 <Download />
             </main>
 

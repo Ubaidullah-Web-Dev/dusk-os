@@ -188,6 +188,40 @@
             }
         ]
     },
+    "ecosystem": {
+        "title": "A Living Ecosystem",
+        "subtitle": "Powered by the most advanced open-source technologies.",
+        "items": [
+            {
+                "id": "rust",
+                "title": "Rust",
+                "description": "Memory-safe performance",
+                "color": "from-orange-500 to-red-600",
+                "icon": "rust"
+            },
+            {
+                "id": "wayland",
+                "title": "Wayland",
+                "description": "Modern heavy-lifting",
+                "color": "from-blue-400 to-indigo-600",
+                "icon": "wayland"
+            },
+            {
+                "id": "pipewire",
+                "title": "PipeWire",
+                "description": "Pro-audio handling",
+                "color": "from-green-400 to-emerald-600",
+                "icon": "pipewire"
+            },
+            {
+                "id": "vulkan",
+                "title": "Vulkan",
+                "description": "Next-gen graphics",
+                "color": "from-red-500 to-pink-600",
+                "icon": "vulkan"
+            }
+        ]
+    },
     "download": {
         "title": [
             "Ready to make",
