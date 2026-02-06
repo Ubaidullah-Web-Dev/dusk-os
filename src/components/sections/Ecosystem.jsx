@@ -68,9 +68,9 @@ const Ecosystem = () => {
 
                 // PHASE 5: Orbs Orbit Shift
                 .to(".tech-orb", {
-                    z: 100,
+                    z: 60,
                     rotateZ: 360,
-                    scale: 1.3,
+                    scale: 1.05,
                     duration: 2.5,
                     stagger: {
                         each: 0.2,
@@ -79,41 +79,48 @@ const Ecosystem = () => {
                     ease: "power2.inOut"
                 }, "-=1.5")
 
-                // PHASE 6: Constellation Explosion
+                // PHASE 6: Constellation Finale (subtle)
                 .to(".constellation-container", {
-                    scale: 1.8,
+                    scale: 1.2,
                     rotateY: 360,
-                    rotateZ: 45,
+                    rotateZ: 20,
                     duration: 3,
                     ease: "power2.inOut"
                 })
                 .to(".tech-orb", {
-                    scale: 1.5,
-                    z: 200,
+                    scale: 1.1,
+                    z: 100,
                     duration: 3,
                     stagger: 0.1,
                     ease: "power2.inOut"
                 }, "<")
                 .to("#energy-core", {
-                    scale: 1.5,
+                    scale: 1.25,
                     rotateZ: 720,
                     duration: 3,
                     ease: "power2.inOut"
                 }, "<");
 
-            // Continuous floating animation for orbs (more dramatic)
-            gsap.to(".tech-orb", {
-                y: "random(-50, 50)",
-                x: "random(-30, 30)",
-                rotateZ: "random(-15, 15)",
-                duration: "random(2.5, 4)",
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut",
-                stagger: {
-                    each: 0.3,
-                    from: "random"
-                }
+            // Continuous floating animation for orbs (pauses individually on hover)
+            document.querySelectorAll('.tech-orb').forEach(orb => {
+                const float = gsap.to(orb, {
+                    y: "random(-40, 40)",
+                    x: "random(-20, 20)",
+                    rotateZ: "random(-10, 10)",
+                    duration: "random(3, 5)",
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+
+                orb.addEventListener('mouseenter', () => {
+                    float.pause();
+                    gsap.to(orb, { x: 0, y: 0, rotateZ: 0, scale: 1.1, duration: 0.4, ease: "power2.out" });
+                });
+                orb.addEventListener('mouseleave', () => {
+                    float.play();
+                    gsap.to(orb, { scale: 1, duration: 0.4, ease: "power2.in" });
+                });
             });
 
             // Core pulsing (more intense)
@@ -166,9 +173,9 @@ const Ecosystem = () => {
                         const opacity = 1 - (this.life / this.maxLife);
                         ctx.beginPath();
                         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                        ctx.fillStyle = `hsla(${this.hue}, 80%, 60%, ${opacity * 0.8})`;
-                        ctx.shadowBlur = 10;
-                        ctx.shadowColor = `hsla(${this.hue}, 100%, 70%, ${opacity})`;
+                        ctx.fillStyle = `hsla(${this.hue}, 60%, 50%, ${opacity * 0.3})`;
+                        ctx.shadowBlur = 4;
+                        ctx.shadowColor = `hsla(${this.hue}, 70%, 55%, ${opacity * 0.2})`;
                         ctx.fill();
                     }
                 }
@@ -229,40 +236,46 @@ const Ecosystem = () => {
             {/* Canvas for particles */}
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 pointer-events-none opacity-50"
+                className="absolute inset-0 pointer-events-none opacity-20"
             />
 
             {/* Holographic Grid Background */}
-            <div className="absolute inset-0 opacity-20" style={{
+            <div className="absolute inset-0 opacity-10" style={{
                 backgroundImage: `
-                    linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)
+                    linear-gradient(var(--color-accent) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--color-accent) 1px, transparent 1px)
                 `,
-                backgroundSize: '50px 50px',
-                perspective: '1000px',
-                transform: 'rotateX(60deg) scale(2)',
+                backgroundSize: '60px 60px',
+                perspective: '1200px',
+                transform: 'rotateX(65deg) scale(2.5)',
                 transformOrigin: 'center'
             }} />
 
             {/* Radial Glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.2)_0%,_transparent_70%)]" />
+            <div className="absolute inset-0" style={{
+                background: 'radial-gradient(circle at center, color-mix(in srgb, var(--color-accent) 15%, transparent) 0%, transparent 70%)'
+            }} />
 
             {/* Animated rays */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]"
                     style={{
-                        background: 'conic-gradient(from 0deg, transparent 0deg, rgba(168, 85, 247, 0.1) 45deg, transparent 90deg, transparent 180deg, rgba(168, 85, 247, 0.1) 225deg, transparent 270deg)',
-                        animation: 'spin 20s linear infinite',
+                        background: 'conic-gradient(from 0deg, transparent 0deg, color-mix(in srgb, var(--color-accent) 5%, transparent) 45deg, transparent 90deg, transparent 180deg, color-mix(in srgb, var(--color-accent) 5%, transparent) 225deg, transparent 270deg)',
+                        animation: 'spin 25s linear infinite',
                     }}
                 />
             </div>
 
             {/* Title */}
             <div className="relative z-10 text-center mb-32">
-                <h2 className="text-5xl md:text-7xl font-display font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 via-purple-400 to-pink-400">
+                <h2 className="text-5xl md:text-7xl font-display font-bold mb-4" style={{
+                    color: 'var(--color-text-primary)'
+                }}>
                     {title}
                 </h2>
-                <p className="text-lg text-purple-200/70 font-light tracking-wide">{subtitle}</p>
+                <p className="text-lg font-light tracking-wide" style={{
+                    color: 'var(--color-text-secondary)'
+                }}>{subtitle}</p>
             </div>
 
             {/* 3D Constellation */}
@@ -274,8 +287,8 @@ const Ecosystem = () => {
                         id="energy-core"
                         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full z-20"
                         style={{
-                            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.9) 0%, rgba(139, 92, 246, 0.4) 50%, transparent 70%)',
-                            boxShadow: '0 0 80px 30px rgba(168, 85, 247, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.3)',
+                            background: 'radial-gradient(circle, color-mix(in srgb, var(--color-accent) 85%, transparent) 0%, color-mix(in srgb, var(--color-accent) 35%, transparent) 50%, transparent 70%)',
+                            boxShadow: '0 0 60px 20px color-mix(in srgb, var(--color-accent) 50%, transparent), inset 0 0 30px rgba(255, 255, 255, 0.2)',
                             willChange: 'transform'
                         }}
                     >
@@ -291,12 +304,12 @@ const Ecosystem = () => {
                             <div key={item.id}>
                                 {/* Connection Line */}
                                 <div
-                                    className="connection-line absolute left-1/2 top-1/2 h-[3px] origin-left"
+                                    className="connection-line absolute left-1/2 top-1/2 h-[2px] origin-left"
                                     style={{
                                         width: '250px',
                                         transform: `translate(-50%, -50%) translate(${pos.x}px, ${pos.y}px) rotate(${(index / items.length) * 360 - 90}deg)`,
-                                        background: `linear-gradient(90deg, rgba(168, 85, 247, 0.9), transparent)`,
-                                        boxShadow: '0 0 15px rgba(168, 85, 247, 0.7)',
+                                        background: `linear-gradient(90deg, var(--color-accent), transparent)`,
+                                        boxShadow: '0 0 10px color-mix(in srgb, var(--color-accent) 40%, transparent)',
                                         transformOrigin: 'right center',
                                         willChange: 'transform'
                                     }}
