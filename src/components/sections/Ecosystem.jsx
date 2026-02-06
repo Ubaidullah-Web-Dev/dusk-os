@@ -16,54 +16,97 @@ const Ecosystem = () => {
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: "top top",
-                    end: "+=250%",
+                    end: "+=400%", // Extended for dramatic scroll journey
                     pin: true,
-                    scrub: 1.5,
+                    scrub: 1,
                 }
             });
 
-            // Initial state
-            gsap.set(".tech-orb", { scale: 0, opacity: 0, z: -200 });
-            gsap.set("#energy-core", { scale: 0.5, opacity: 0 });
+            // Initial state - everything hidden and behind
+            gsap.set(".tech-orb", { scale: 0, opacity: 0, z: -500, rotateX: -90 });
+            gsap.set("#energy-core", { scale: 0, opacity: 0, rotateZ: 0 });
             gsap.set(".connection-line", { scaleX: 0, opacity: 0 });
+            gsap.set(".constellation-container", { scale: 0.5, rotateX: 0, rotateY: 0, rotateZ: 0 });
 
-            // Phase 1: Core appears
+            // PHASE 1: Core Genesis  
             tl.to("#energy-core", {
                 scale: 1,
                 opacity: 1,
-                duration: 1,
+                rotateZ: 360,
+                duration: 2,
                 ease: "power2.out"
             })
-                // Phase 2: Orbs float in
+
+                // PHASE 2: Orbs Materialize
                 .to(".tech-orb", {
                     scale: 1,
                     opacity: 1,
                     z: 0,
-                    duration: 1.5,
-                    stagger: 0.2,
-                    ease: "back.out(1.2)"
-                }, "-=0.5")
-                // Phase 3: Connection lines appear
+                    rotateX: 0,
+                    duration: 2,
+                    stagger: 0.15,
+                    ease: "back.out(1.5)"
+                }, "+=0.5")
+
+                // PHASE 3: Connection Activation
                 .to(".connection-line", {
                     scaleX: 1,
-                    opacity: 0.6,
-                    duration: 1,
+                    opacity: 0.8,
+                    duration: 1.5,
                     stagger: 0.1,
-                    ease: "power1.inOut"
+                    ease: "power2.inOut"
                 }, "-=1")
-                // Phase 4: Expand the constellation
-                .to(".constellation-container", {
-                    scale: 1.3,
-                    rotateZ: 15,
-                    duration: 2,
-                    ease: "power1.inOut"
-                });
 
-            // Continuous floating animation for orbs
+                // PHASE 4: 3D Rotation Dance
+                .to(".constellation-container", {
+                    rotateY: 180,
+                    rotateX: 20,
+                    scale: 1.2,
+                    duration: 3,
+                    ease: "power1.inOut"
+                }, "+=0.3")
+
+                // PHASE 5: Orbs Orbit Shift
+                .to(".tech-orb", {
+                    z: 100,
+                    rotateZ: 360,
+                    scale: 1.3,
+                    duration: 2.5,
+                    stagger: {
+                        each: 0.2,
+                        from: "center"
+                    },
+                    ease: "power2.inOut"
+                }, "-=1.5")
+
+                // PHASE 6: Constellation Explosion
+                .to(".constellation-container", {
+                    scale: 1.8,
+                    rotateY: 360,
+                    rotateZ: 45,
+                    duration: 3,
+                    ease: "power2.inOut"
+                })
+                .to(".tech-orb", {
+                    scale: 1.5,
+                    z: 200,
+                    duration: 3,
+                    stagger: 0.1,
+                    ease: "power2.inOut"
+                }, "<")
+                .to("#energy-core", {
+                    scale: 1.5,
+                    rotateZ: 720,
+                    duration: 3,
+                    ease: "power2.inOut"
+                }, "<");
+
+            // Continuous floating animation for orbs (more dramatic)
             gsap.to(".tech-orb", {
-                y: "random(-30, 30)",
-                x: "random(-20, 20)",
-                duration: "random(3, 5)",
+                y: "random(-50, 50)",
+                x: "random(-30, 30)",
+                rotateZ: "random(-15, 15)",
+                duration: "random(2.5, 4)",
                 repeat: -1,
                 yoyo: true,
                 ease: "sine.inOut",
@@ -73,10 +116,10 @@ const Ecosystem = () => {
                 }
             });
 
-            // Core pulsing
+            // Core pulsing (more intense)
             gsap.to("#energy-core", {
-                scale: 1.1,
-                duration: 2,
+                scale: 1.15,
+                duration: 1.5,
                 repeat: -1,
                 yoyo: true,
                 ease: "sine.inOut"
@@ -90,25 +133,28 @@ const Ecosystem = () => {
                 canvas.height = window.innerHeight;
 
                 const particles = [];
-                const particleCount = 80;
+                const particleCount = 120; // Increased particle count
 
                 class Particle {
                     constructor() {
                         this.reset();
+                        this.hue = Math.random() * 60 + 250; // Purple to pink range
                     }
 
                     reset() {
                         this.x = canvas.width / 2;
                         this.y = canvas.height / 2;
                         this.angle = Math.random() * Math.PI * 2;
-                        this.speed = Math.random() * 2 + 1;
+                        this.speed = Math.random() * 3 + 1;
                         this.life = 0;
-                        this.maxLife = Math.random() * 100 + 100;
+                        this.maxLife = Math.random() * 120 + 80;
+                        this.radius = Math.random() * 2 + 1;
                     }
 
                     update() {
                         this.x += Math.cos(this.angle) * this.speed;
                         this.y += Math.sin(this.angle) * this.speed;
+                        this.angle += 0.01; // Spiral effect
                         this.life++;
 
                         if (this.life > this.maxLife) {
@@ -119,8 +165,10 @@ const Ecosystem = () => {
                     draw() {
                         const opacity = 1 - (this.life / this.maxLife);
                         ctx.beginPath();
-                        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(139, 92, 246, ${opacity * 0.6})`;
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `hsla(${this.hue}, 80%, 60%, ${opacity * 0.8})`;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = `hsla(${this.hue}, 100%, 70%, ${opacity})`;
                         ctx.fill();
                     }
                 }
@@ -130,7 +178,7 @@ const Ecosystem = () => {
                 }
 
                 function animate() {
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                     particles.forEach(particle => {
@@ -181,7 +229,7 @@ const Ecosystem = () => {
             {/* Canvas for particles */}
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 pointer-events-none opacity-40"
+                className="absolute inset-0 pointer-events-none opacity-50"
             />
 
             {/* Holographic Grid Background */}
@@ -197,11 +245,21 @@ const Ecosystem = () => {
             }} />
 
             {/* Radial Glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.15)_0%,_transparent_70%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.2)_0%,_transparent_70%)]" />
+
+            {/* Animated rays */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]"
+                    style={{
+                        background: 'conic-gradient(from 0deg, transparent 0deg, rgba(168, 85, 247, 0.1) 45deg, transparent 90deg, transparent 180deg, rgba(168, 85, 247, 0.1) 225deg, transparent 270deg)',
+                        animation: 'spin 20s linear infinite',
+                    }}
+                />
+            </div>
 
             {/* Title */}
             <div className="relative z-10 text-center mb-32">
-                <h2 className="text-5xl md:text-7xl font-display font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 via-purple-400 to-pink-400 animate-pulse">
+                <h2 className="text-5xl md:text-7xl font-display font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 via-purple-400 to-pink-400">
                     {title}
                 </h2>
                 <p className="text-lg text-purple-200/70 font-light tracking-wide">{subtitle}</p>
@@ -217,11 +275,11 @@ const Ecosystem = () => {
                         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full z-20"
                         style={{
                             background: 'radial-gradient(circle, rgba(168, 85, 247, 0.9) 0%, rgba(139, 92, 246, 0.4) 50%, transparent 70%)',
-                            boxShadow: '0 0 60px 20px rgba(168, 85, 247, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.3)',
+                            boxShadow: '0 0 80px 30px rgba(168, 85, 247, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.3)',
                             willChange: 'transform'
                         }}
                     >
-                        <div className="absolute inset-0 rounded-full bg-white opacity-20 blur-xl animate-pulse" />
+                        <div className="absolute inset-0 rounded-full bg-white opacity-30 blur-xl animate-pulse" />
                         <div className="absolute inset-4 rounded-full border-2 border-white/30 animate-spin" style={{ animationDuration: '8s' }} />
                         <div className="absolute inset-8 rounded-full border border-white/20 animate-spin" style={{ animationDuration: '4s', animationDirection: 'reverse' }} />
                     </div>
@@ -233,12 +291,12 @@ const Ecosystem = () => {
                             <div key={item.id}>
                                 {/* Connection Line */}
                                 <div
-                                    className="connection-line absolute left-1/2 top-1/2 h-[2px] origin-left"
+                                    className="connection-line absolute left-1/2 top-1/2 h-[3px] origin-left"
                                     style={{
                                         width: '250px',
                                         transform: `translate(-50%, -50%) translate(${pos.x}px, ${pos.y}px) rotate(${(index / items.length) * 360 - 90}deg)`,
-                                        background: `linear-gradient(90deg, rgba(168, 85, 247, 0.8), transparent)`,
-                                        boxShadow: '0 0 10px rgba(168, 85, 247, 0.5)',
+                                        background: `linear-gradient(90deg, rgba(168, 85, 247, 0.9), transparent)`,
+                                        boxShadow: '0 0 15px rgba(168, 85, 247, 0.7)',
                                         transformOrigin: 'right center',
                                         willChange: 'transform'
                                     }}
@@ -256,7 +314,7 @@ const Ecosystem = () => {
                                     <div className="relative">
                                         {/* Orb Glow */}
                                         <div
-                                            className="absolute -inset-4 rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+                                            className="absolute -inset-6 rounded-full blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-300"
                                             style={{
                                                 background: `linear-gradient(135deg, ${item.color.replace('from-', '').replace(' to-', ', ')})`
                                             }}
@@ -264,13 +322,13 @@ const Ecosystem = () => {
 
                                         {/* Orb Body */}
                                         <div
-                                            className="relative w-24 h-24 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md group-hover:scale-110 transition-all duration-300"
+                                            className="relative w-28 h-28 rounded-full flex items-center justify-center border-2 border-white/30 backdrop-blur-md group-hover:scale-110 transition-all duration-300"
                                             style={{
-                                                background: `linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))`,
-                                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1)'
+                                                background: `linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05))`,
+                                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15)'
                                             }}
                                         >
-                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br ${item.color}`}>
+                                            <div className={`w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br ${item.color}`}>
                                                 <div style={{ color: 'white' }}>
                                                     {getIcon(item.icon)}
                                                 </div>
@@ -279,7 +337,11 @@ const Ecosystem = () => {
 
                                         {/* Info Card */}
                                         <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-32 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                                            <div className="glass rounded-lg p-3 border border-white/10">
+                                            <div className="glass rounded-lg p-3 border border-white/20 backdrop-blur-xl"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+                                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                                                }}>
                                                 <h4 className="font-bold text-sm text-white text-center">{item.title}</h4>
                                                 <p className="text-[10px] text-white/60 text-center mt-1">{item.description}</p>
                                             </div>
@@ -291,6 +353,12 @@ const Ecosystem = () => {
                     })}
                 </div>
             </div>
+
+            <style jsx>{`
+                @keyframes spin {
+                    to { transform: translate(-50%, -50%) rotate(360deg); }
+                }
+            `}</style>
         </section>
     );
 };
